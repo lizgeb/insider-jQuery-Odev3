@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil Kartları</title>
+
+  <!-- Stil Dosyaları -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1 class="animate__animated animate__fadeInDown">Profil Kartları</h1>
+  <button id="loadUsers" class="animate__animated">Kartları Yükle</button>
+
+  <div class="slider"></div>
+
+  <!-- JS Kütüphaneleri -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      // Buton efekti
+      $("#loadUsers").hover(function () {
+        $(this).addClass("animate__bounce");
+      }, function () {
+        $(this).removeClass("animate__bounce");
+      });
+
+  $('#loadUsers').click(function () {
+    // Slick varsa önce kaldır(butona ikinci basışta çakışma olmaması için*)
+    if ($('.slider').hasClass('slick-initialized')) {
+      $('.slider').slick('unslick');
+    }
+
+    $('.slider').empty(); // İçeriği temizle
+    $(this).effect("shake");
+
+        $.ajax({
+          url: 'https://randomuser.me/api/?results=6',
+          dataType: "json",
+          success: function (data) {
+            data.results.forEach(function (user) {
+              const fullName = user.name.first + " " + user.name.last;
+              const gender = user.gender;
+              const email = user.email;
+              const country = user.location.country;
+              const image = user.picture.large;
+
+              const card = $(`
+                <div class="card animate__animated animate__fadeInUp">
+                  <img src="${image}" alt="${fullName}">
+                  <h3>${fullName}</h3>
+                  <p>Cinsiyet: ${gender}</p>
+                  <p>Email: ${email}</p>
+                  <p>Ülke: ${country}</p>
+                </div>
+              `);
+
+              $('.slider').append(card);
+            });
+
+            // Slick-carousel ile sağa sola kayan animasyonlu geçiş
+            $('.slider').slick({
+              slidesToShow: 3,//aynı anda 3 kart görünür
+              slidesToScroll: 1,
+              infinite: true,
+              dots: true,
+              arrows: true,
+              autoplay: true,//otomatik geçiş yapılır
+              autoplaySpeed: 3000,
+              responsive: [
+                {
+                  breakpoint: 768,
+                  settings: {
+                    slidesToShow: 1
+                  }
+                }
+              ]
+            });
+
+            // Hover ile görsel döndürme
+            $('.card').hover(function () {
+              $(this).toggleClass("face-change");
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
