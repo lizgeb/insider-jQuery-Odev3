@@ -19,6 +19,7 @@
 
   <h1 class="animate__animated animate__fadeInDown">Profil Kartları</h1>
   <button id="loadUsers" class="animate__animated">Kartları Yükle</button>
+  <input type="number" id="input" placeholder="Yüklenecek Kart Sayısı">
 
   <div class="slider"></div>
 
@@ -37,6 +38,7 @@
       });
 
   $('#loadUsers').click(function () {
+    const input = $('#input').val() || 6;
     // Slick varsa önce kaldır(butona ikinci basışta çakışma olmaması için*)
     if ($('.slider').hasClass('slick-initialized')) {
       $('.slider').slick('unslick');
@@ -46,7 +48,7 @@
     $(this).effect("shake");
 
         $.ajax({
-          url: 'https://randomuser.me/api/?results=6',
+          url: 'https://randomuser.me/api/?results='+input,
           dataType: "json",
           success: function (data) {
             data.results.forEach(function (user) {
